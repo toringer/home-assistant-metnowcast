@@ -22,7 +22,7 @@ from homeassistant.util import dt as dt_util
 _LOGGER = logging.getLogger(__name__)
 
 
-SCAN_INTERVAL = datetime.timedelta(minutes=20)
+SCAN_INTERVAL = datetime.timedelta(minutes=7)
 
 ATTRIBUTION = "Weather now cast from met.no, delivered by the Norwegian " \
               "Meteorological Institute."
