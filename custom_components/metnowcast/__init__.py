@@ -1,0 +1,1 @@
+"""met.no precipitation now cast component."""
