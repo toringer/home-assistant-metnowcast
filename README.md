@@ -2,7 +2,7 @@
 
 This component will add a sensor for met.no precipitation now cast. The sensor shows the maximum amount of precipitation for the next 90 minutes. Detailed precipitation data is available in the 'forecast' attribute.
 
-https://api.met.no/weatherapi/nowcast/0.9/documentation
+https://api.met.no/weatherapi/nowcast/2.0/documentation
 
 
 ## HACS Installation

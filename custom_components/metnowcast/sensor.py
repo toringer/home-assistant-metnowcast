@@ -8,6 +8,7 @@ import aiohttp
 import async_timeout
 import voluptuous as vol
 import datetime
+import requests
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -24,11 +25,14 @@ _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = datetime.timedelta(minutes=7)
 
+# https://api.met.no/license_data.html
 ATTRIBUTION = "Weather now cast from met.no, delivered by the Norwegian " \
               "Meteorological Institute."
-# https://api.met.no/license_data.html
 
 
+REQUEST_HEADER = {
+    'User-Agent': 'home-assistant-metnowcast/0.1 https://github.com/toringer/home-assistant-metnowcast'
+}
 
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -105,16 +109,16 @@ class YrSensor(Entity):
         """Retrieve latest state."""
         data = await self._met_api.fetching_data()
         forecast = []
-        for time_entry in data['product']['time']:
-            valid_from = dt_util.parse_datetime(time_entry['@from'])
-            valid_to = dt_util.parse_datetime(time_entry['@to'])
-            unit = time_entry['location']['precipitation']['@unit']
-            value = time_entry['location']['precipitation']['@value']
+        for time_entry in data["properties"]["timeseries"]:
+            _LOGGER.info("time_entry: " + str(time_entry))
+            valid_from = time_entry['time']
+            valid_to = (dt_util.parse_datetime(time_entry['time']) + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ')
+            unit = data['properties']['meta']['units']['precipitation_amount']
+            value = time_entry['data']['instant']['details']['precipitation_rate']
             forecast.append({'unit': unit,'value': value, 'from': valid_from, 'to': valid_to})
 
-        _LOGGER.info("met now cast data updated")
         self._forecast = forecast
-        self._state = max(self._forecast, key=lambda ev: ev['value'])['value']
+        self._state = forecast[0]['value']
         self._unit_of_measurement = self._forecast[0]['unit']
 
 
@@ -123,7 +127,7 @@ class MetData:
 
     def __init__(self, hass, coordinates):
         """Initialize the data object."""
-        self._url = 'https://api.met.no/weatherapi/nowcast/0.9/'
+        self._url = 'https://api.met.no/weatherapi/nowcast/2.0/complete'
         self._urlparams = coordinates
         self.data = {}
         self.hass = hass
@@ -137,21 +141,20 @@ class MetData:
             minutes = 15 + randrange(6)
             _LOGGER.error("Retrying in %i minutes: %s", minutes, err)
         try:
-            websession = async_get_clientsession(self.hass)
-            with async_timeout.timeout(10):
-                resp = await websession.get(
-                    self._url, params=self._urlparams)
-            if resp.status != 200:
-                try_again('{} returned {}'.format(resp.url, resp.status))
+            response = requests.get(url = self._url, params = self._urlparams, headers = REQUEST_HEADER)
+            if response.status_code != 200:
+                try_again('{} returned {}'.format(response.url, response.status_code))
                 return
-            text = await resp.text()
+
+            data = response.json()
+            _LOGGER.debug("type: " + str(data["type"]))
 
         except (asyncio.TimeoutError, aiohttp.ClientError) as err:
             try_again(err)
             return
 
         try:
-            self.data = xmltodict.parse(text)['weatherdata']
+            self.data = data
             return self.data
         except (ExpatError, IndexError) as err:
             try_again(err)
