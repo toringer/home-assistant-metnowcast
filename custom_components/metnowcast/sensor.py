@@ -141,7 +141,7 @@ class MetData:
             minutes = 15 + randrange(6)
             _LOGGER.error("Retrying in %i minutes: %s", minutes, err)
         try:
-            response = await hass.async_add_executor_job(requests.get(url = self._url, params = self._urlparams, headers = REQUEST_HEADER))
+            response = await self.hass.async_add_executor_job(requests.get(url = self._url, params = self._urlparams, headers = REQUEST_HEADER))
             if response.status_code != 200:
                 try_again('{} returned {}'.format(response.url, response.status_code))
                 return
