@@ -1,7 +1,7 @@
 {
   "domain": "metnowcast",
   "name": "met.no precipitation now cast",
-  "version": "1.1",
+  "version": "1.1.0",
   "documentation": "https://github.com/toringer/home-assistant-metnowcast",
   "requirements": [],
   "dependencies": [],
