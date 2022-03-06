@@ -1,0 +1,7 @@
+{
+  "name": "Met.no Nowcast",
+  "domains": ["weatcher"],
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "metnowcast.zip"
+}
