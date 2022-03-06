@@ -2,6 +2,7 @@
 
 import logging
 import datetime
+import random
 
 from homeassistant.const import (
     CONF_LATITUDE,
@@ -163,6 +164,8 @@ class NowcastWeather(WeatherEntity):
             precipitation_rate = None
             if "precipitation_rate" in details:
                 precipitation_rate = details["precipitation_rate"]
+            if self.location_name == "debug":
+                precipitation_rate = random.randrange(30)
 
             relative_humidity = None
             if "relative_humidity" in details:
