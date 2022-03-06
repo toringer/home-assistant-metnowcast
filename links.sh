@@ -1,0 +1,1 @@
+ln -s /root/home-assistant-metnowcast/custom_components/metnowcast metnowcast
