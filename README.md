@@ -7,13 +7,13 @@
 
 # Met.no Nowcast component
 
-This component will add a weatcher sensor for the met.no precipitation nowcast. The sensor shows the maximum amount of precipitation for the next 90 minutes. Detailed precipitation data is available in the 'forecast' attribute.
+Add precipitation nowcast to your Home Assistant. This component will add a weather sensor with data from the [met.no](https://www.met.no/) precipitation [nowcast](https://api.met.no/weatherapi/nowcast/2.0/documentation) service.
 
-https://api.met.no/weatherapi/nowcast/2.0/documentation
+The weather sensor holds precipitation data for the next 90 minutes. Detailed precipitation data is available in the `forecast` attribute.
+
+Only available for locations in the Nordic area.
 
 ## Installation
-
-### Installation with HACS
 
 - Ensure that [HACS](https://hacs.xyz/) is installed.
 - In HACS / Integrations / menu / Custom repositories, add the url the this repository.
