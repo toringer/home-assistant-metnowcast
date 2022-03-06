@@ -5,7 +5,7 @@
 [![home-assistant-metnowcast_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-metnowcast/total)](https://github.com/toringer/home-assistant-metnowcast)
 [![home-assistant-metnowcast_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-metnowcast/latest/total)](https://github.com/toringer/home-assistant-metnowcast)
 
-# Met.no Nowcast component
+# Met.no Nowcast component for Home Assistant
 
 Add precipitation nowcast to your Home Assistant. This component will add a weather sensor with data from the [met.no](https://www.met.no/) precipitation [nowcast](https://api.met.no/weatherapi/nowcast/2.0/documentation) service.
 
