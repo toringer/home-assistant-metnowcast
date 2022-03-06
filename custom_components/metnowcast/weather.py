@@ -182,10 +182,6 @@ class NowcastWeather(WeatherEntity):
 
             time = dt_util.parse_datetime(timeserie["time"])
 
-            _LOGGER.debug(
-                f"data: {time} {temp} {precipitation_rate} {relative_humidity} {wind_from_direction} {wind_speed} {wind_speed_of_gust}"
-            )
-
             if temp is not None:
                 self._forecast.append(
                     Forecast(
@@ -207,3 +203,4 @@ class NowcastWeather(WeatherEntity):
                     )
                 )
         self._first_timeserie = self._raw_data["properties"]["timeseries"][0]
+        _LOGGER.info(f"{self.location_name} updated")
