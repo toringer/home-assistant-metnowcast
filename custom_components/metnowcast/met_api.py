@@ -31,5 +31,4 @@ class MetApi:
             raise NotFound
 
         data = response.json()
-        _LOGGER.debug(f"Complete forecast: {str(data)}")
         return data
