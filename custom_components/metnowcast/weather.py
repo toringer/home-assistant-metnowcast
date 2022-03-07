@@ -74,6 +74,11 @@ class NowcastWeather(WeatherEntity):
         self._first_timeserie = None
 
     @property
+    def force_update(self) -> str:
+        """Force update."""
+        return True
+
+    @property
     def unique_id(self) -> str:
         """Return unique ID."""
         return f"nowcast-{self.location_name}"
