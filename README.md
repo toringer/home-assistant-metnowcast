@@ -23,3 +23,49 @@ Only available for locations in the Nordic area.
 ## Configuration
 
 Configuration of the integration is done through Configuration > Integrations where you enter coordinates.
+
+## Display precipitation
+
+To display the precipitation data, use your choice of charting component.
+
+### Example configuration using [chartjs-card](https://github.com/ricreis394/chartjs-card)
+
+Replace `<entity_id>` with your entity id.
+
+```
+- chart: line
+  data:
+    datasets:
+      - backgroundColor: rgb(255, 99, 132)
+        fill: true
+        borderWidth: 0
+        cubicInterpolationMode: monotone
+        data: >-
+          ${states[<entity_id>].attributes.forecast.map(cast =>
+          ({x: new Date(cast.datetime).getTime(),y:
+          parseFloat(cast.precipitation)}))}
+        label: Precipitation
+    labels: >-
+      ${states[<entity_id>].attributes.forecast.map(cast => new
+      Date(cast.datetime).toTimeString())}
+  custom_options:
+    showLegend: false
+  options:
+    elements:
+      point:
+        radius: 0
+    scales:
+      x:
+        display: false
+      'y':
+        beginAtZero: true
+        display: false
+    plugins:
+      title:
+        display: false
+        text: Precipitation
+  entity_row: false
+  type: custom:chartjs-card
+```
+
+[![Precipitation chart](precipitation_chart.png)]
