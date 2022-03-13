@@ -68,4 +68,4 @@ Replace `<entity_id>` with your entity id.
   type: custom:chartjs-card
 ```
 
-[![Precipitation chart](precipitation_chart.png)]
+![Precipitation chart](precipitation_chart.png)
