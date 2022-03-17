@@ -190,6 +190,12 @@ class NowcastWeather(WeatherEntity):
 
             time = dt_util.parse_datetime(timeserie["time"])
 
+            condition = None
+            if "next_1_hours" in timeserie["data"]:
+                condition = format_condition(
+                    timeserie["data"]["next_1_hours"]["summary"]["symbol_code"]
+                )
+
             if temp is not None:
                 self._forecast.append(
                     Forecast(
@@ -200,6 +206,7 @@ class NowcastWeather(WeatherEntity):
                         wind_speed=wind_speed,
                         wind_speed_of_gust=wind_speed_of_gust,
                         datetime=time,
+                        condition=condition,
                     )
                 )
             else:
