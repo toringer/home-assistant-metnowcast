@@ -5,7 +5,8 @@
     },
     "error": {
       "not_found": "Could not find weather information for the coordinates",
-      "unknown": "Unexpected error"
+      "unknown": "Unexpected error",
+      "no_coverage": "No radar coverage for these coordinates"
     },
     "step": {
       "user": {

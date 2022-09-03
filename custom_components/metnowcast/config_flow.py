@@ -12,6 +12,7 @@ from .const import (
     DOMAIN,
     NAME,
     NotFound,
+    NoCoverage
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,7 +29,10 @@ async def validate_input(hass: HomeAssistant, lat: float, lon: float) -> dict[st
     """Validate the user input allows us to connect."""
 
     api = MetApi()
-    await hass.async_add_executor_job(api.get_complete, lat, lon)
+    forecast = await hass.async_add_executor_job(api.get_complete, lat, lon)
+    radar_coverage = forecast["properties"]["meta"]["radar_coverage"]
+    if radar_coverage != "ok":
+        raise NoCoverage
     return {"title": NAME}
 
 
@@ -55,6 +59,8 @@ class MetNowcastConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await validate_input(self.hass, lat, lon)
         except NotFound:
             errors["base"] = "not_found"
+        except NoCoverage:
+            errors["base"] = "no_coverage"
         except Exception:  # pylint: disable=broad-except
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"

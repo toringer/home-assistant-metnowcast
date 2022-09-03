@@ -19,6 +19,8 @@ ATTRIBUTION = (
     "Weather forecast from met.no, delivered by the Norwegian "
     "Meteorological Institute."
 )
+ATTR_RADAR_COVERAGE = "radar_coverage"
+ATTR_HAS_PRECIPITATION = "has_precipitation"
 CONDITIONS_MAP = {
     ATTR_CONDITION_CLEAR_NIGHT: {"clearsky_night"},
     ATTR_CONDITION_CLOUDY: {"cloudy_night", "cloudy_day", "cloudy"},
@@ -159,3 +161,6 @@ class InvalidAuth(HomeAssistantError):
 
 class NotFound(HomeAssistantError):
     """Error to indicate we cannot find weatcher information for the coordinate."""
+
+class NoCoverage(HomeAssistantError):
+    """No radar coverage."""
