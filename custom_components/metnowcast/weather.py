@@ -9,6 +9,8 @@ from homeassistant.const import (
     CONF_LONGITUDE,
     CONF_NAME,
     TEMP_CELSIUS,
+    SPEED_METERS_PER_SECOND,
+    LENGTH_MILLIMETERS
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -55,6 +57,10 @@ def format_condition(condition: str) -> str:
 class NowcastWeather(WeatherEntity):
     """Representation of a Nowcast sensor."""
 
+    _attr_native_temperature_unit = TEMP_CELSIUS
+    _attr_native_wind_speed_unit = SPEED_METERS_PER_SECOND
+    _attr_native_precipitation_unit= LENGTH_MILLIMETERS
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -72,7 +78,7 @@ class NowcastWeather(WeatherEntity):
         self._raw_data = None
         self._forecast: list[Forecast] = None
         self._first_timeserie = None
-        _attr_native_temperature_unit = TEMP_CELSIUS
+
 
     @property
     def force_update(self) -> str:
