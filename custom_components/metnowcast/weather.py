@@ -72,6 +72,7 @@ class NowcastWeather(WeatherEntity):
         self._raw_data = None
         self._forecast: list[Forecast] = None
         self._first_timeserie = None
+        _attr_native_temperature_unit = TEMP_CELSIUS
 
     @property
     def force_update(self) -> str:
@@ -97,17 +98,12 @@ class NowcastWeather(WeatherEntity):
         return format_condition(condition)
 
     @property
-    def temperature(self) -> float:
+    def native_temperature(self) -> float:
         """Return the temperature."""
         return self._first_timeserie["data"]["instant"]["details"]["air_temperature"]
 
     @property
-    def temperature_unit(self) -> str:
-        """Return the unit of measurement."""
-        return TEMP_CELSIUS
-
-    @property
-    def pressure(self) -> float:
+    def native_pressure(self) -> float:
         """Return the pressure."""
         return None
 
@@ -117,7 +113,7 @@ class NowcastWeather(WeatherEntity):
         return self._first_timeserie["data"]["instant"]["details"]["relative_humidity"]
 
     @property
-    def wind_speed(self) -> float:
+    def native_wind_speed(self) -> float:
         """Return the wind speed."""
         return self._first_timeserie["data"]["instant"]["details"]["wind_speed"]
 
