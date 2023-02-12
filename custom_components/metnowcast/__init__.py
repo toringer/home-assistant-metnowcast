@@ -14,10 +14,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
-
     api = MetApi()
     hass.data[DOMAIN]["api"] = api
+
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 

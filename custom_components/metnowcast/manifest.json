@@ -1,7 +1,7 @@
 {
   "domain": "metnowcast",
   "name": "Met.no Nowcast",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "config_flow": true,
   "documentation": "https://github.com/toringer/home-assistant-metnowcast",
   "issue_tracker": "https://github.com/toringer/home-assistant-metnowcast/issues",
