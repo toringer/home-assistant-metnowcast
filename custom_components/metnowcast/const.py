@@ -20,6 +20,7 @@ ATTRIBUTION = (
     "Meteorological Institute."
 )
 ATTR_RADAR_COVERAGE = "radar_coverage"
+ATTR_RADAR_ONLINE = "radar_online"
 ATTR_HAS_PRECIPITATION = "has_precipitation"
 CONDITIONS_MAP = {
     ATTR_CONDITION_CLEAR_NIGHT: {"clearsky_night"},
@@ -161,6 +162,7 @@ class InvalidAuth(HomeAssistantError):
 
 class NotFound(HomeAssistantError):
     """Error to indicate we cannot find weatcher information for the coordinate."""
+
 
 class NoCoverage(HomeAssistantError):
     """No radar coverage."""

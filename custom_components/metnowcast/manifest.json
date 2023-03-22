@@ -1,7 +1,7 @@
 {
   "domain": "metnowcast",
   "name": "Met.no Nowcast",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "config_flow": true,
   "documentation": "https://github.com/toringer/home-assistant-metnowcast",
   "issue_tracker": "https://github.com/toringer/home-assistant-metnowcast/issues",
@@ -10,6 +10,8 @@
   "zeroconf": [],
   "homekit": {},
   "dependencies": [],
-  "codeowners": ["@toringer"],
+  "codeowners": [
+    "@toringer"
+  ],
   "iot_class": "cloud_polling"
 }

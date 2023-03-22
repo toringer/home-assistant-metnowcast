@@ -10,7 +10,7 @@ from homeassistant.const import (
     CONF_NAME,
     TEMP_CELSIUS,
     SPEED_METERS_PER_SECOND,
-    LENGTH_MILLIMETERS
+    LENGTH_MILLIMETERS,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -29,7 +29,8 @@ from .const import (
     NAME,
     CONDITIONS_MAP,
     ATTR_RADAR_COVERAGE,
-    ATTR_HAS_PRECIPITATION
+    ATTR_RADAR_ONLINE,
+    ATTR_HAS_PRECIPITATION,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ class NowcastWeather(WeatherEntity):
 
     _attr_native_temperature_unit = TEMP_CELSIUS
     _attr_native_wind_speed_unit = SPEED_METERS_PER_SECOND
-    _attr_native_precipitation_unit= LENGTH_MILLIMETERS
+    _attr_native_precipitation_unit = LENGTH_MILLIMETERS
 
     def __init__(
         self,
@@ -81,8 +82,8 @@ class NowcastWeather(WeatherEntity):
         self._forecast: list[Forecast] = None
         self._first_timeserie = None
         self._radar_coverage = ""
+        self._radar_online = False
         self._has_precipitation = False
-
 
     @property
     def force_update(self) -> str:
@@ -162,19 +163,25 @@ class NowcastWeather(WeatherEntity):
         """Return the state attributes."""
         return {
             ATTR_RADAR_COVERAGE: self._radar_coverage,
-            ATTR_HAS_PRECIPITATION: self._has_precipitation
+            ATTR_HAS_PRECIPITATION: self._has_precipitation,
+            ATTR_RADAR_ONLINE: self._radar_online,
         }
 
     async def async_update(self):
+        self._forecast = []
+        self._has_precipitation = False
+
         """Retrieve latest state."""
         self._raw_data = await self._hass.async_add_executor_job(
             self._met_api.get_complete, self.lat, self.lon
         )
         self._radar_coverage = self._raw_data["properties"]["meta"]["radar_coverage"]
-        timeseries = self._raw_data["properties"]["timeseries"]
-        self._forecast = []
-        self._has_precipitation = False
+        if self._radar_coverage == "ok":
+            self._radar_online = True
+        else:
+            self._radar_online = False
 
+        timeseries = self._raw_data["properties"]["timeseries"]
         for timeserie in timeseries:
             details = timeserie["data"]["instant"]["details"]
 
@@ -187,7 +194,7 @@ class NowcastWeather(WeatherEntity):
                 precipitation_rate = details["precipitation_rate"]
             if self.location_name == "debug":
                 precipitation_rate = random.randrange(30)
-            if precipitation_rate > 0:
+            if precipitation_rate is not None and precipitation_rate > 0:
                 self._has_precipitation = True
 
             relative_humidity = None
