@@ -26,8 +26,6 @@ change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add
 template: |
   [![Downloads for this release](https://img.shields.io/github/downloads/toringer/home-assistant-metnowcast/v$RESOLVED_VERSION/total.svg)](https://github.com/toringer/home-assistant-metnowcast/releases/v$RESOLVED_VERSION)
 
-  ### Don't forget to bump version before releasing new version
-
   ## Changes
 
   $CHANGES
@@ -43,3 +41,15 @@ autolabeler:
   - label: "translation"
     title:
       - "/translation/i"
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch

@@ -15,12 +15,14 @@ from homeassistant.components.weather import (
 
 DOMAIN = "metnowcast"
 NAME = "Met.no Nowcast"
+VERSION = "1.0.0"
 ATTRIBUTION = (
     "Weather forecast from met.no, delivered by the Norwegian "
     "Meteorological Institute."
 )
 ATTR_RADAR_COVERAGE = "radar_coverage"
 ATTR_RADAR_ONLINE = "radar_online"
+ATTR_FORECAST_JSON = "forecast_json"
 ATTR_HAS_PRECIPITATION = "has_precipitation"
 CONDITIONS_MAP = {
     ATTR_CONDITION_CLEAR_NIGHT: {"clearsky_night"},

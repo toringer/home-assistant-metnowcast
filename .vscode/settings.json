@@ -1,0 +1,15 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.defaultInterpreterPath": "/usr/bin/python",
+    "files.associations": {
+        "*.yaml": "home-assistant"
+    },
+    "python.analysis.extraPaths": [
+        "/home/vscode/.local/lib/python3.10/site-packages/homeassistant"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}
