@@ -212,7 +212,7 @@ class NowcastWeather(WeatherEntity):
             if "precipitation_rate" in details:
                 precipitation_rate = details["precipitation_rate"]
             if self.location_name == "debug":
-                precipitation_rate = random.randrange(30)
+                precipitation_rate = random.randrange(10)
             if precipitation_rate is not None and precipitation_rate > 0:
                 self._has_precipitation = True
 
