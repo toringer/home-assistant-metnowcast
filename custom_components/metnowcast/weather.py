@@ -232,7 +232,7 @@ class NowcastWeather(WeatherEntity):
             if "wind_speed_of_gust" in details:
                 wind_speed_of_gust = details["wind_speed_of_gust"]
 
-            time = dt_util.parse_datetime(timeserie["time"])
+            time = timeserie["time"]
 
             condition = None
             if "next_1_hours" in timeserie["data"]:
