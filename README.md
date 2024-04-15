@@ -28,44 +28,39 @@ Configuration of the integration is done through Configuration > Integrations wh
 
 To display the precipitation data, use your choice of charting component.
 
-### Example configuration using [chartjs-card](https://github.com/ricreis394/chartjs-card)
+### Example configuration using [apexcharts-card]([https://github.com/ricreis394/chartjs-card](https://github.com/RomRider/apexcharts-card))
 
 Replace `<entity_id>` with your entity id.
 
 ```
-- chart: line
-  data:
-    datasets:
-      - backgroundColor: rgb(255, 99, 132)
-        fill: true
-        borderWidth: 0
-        cubicInterpolationMode: monotone
-        data: >-
-          ${states[<entity_id>].attributes.forecast.map(cast =>
-          ({x: new Date(cast.datetime).getTime(),y:
-          parseFloat(cast.precipitation)}))}
-        label: Precipitation
-    labels: >-
-      ${states[<entity_id>].attributes.forecast.map(cast => new
-      Date(cast.datetime).toTimeString())}
-  custom_options:
-    showLegend: false
-  options:
-    elements:
-      point:
-        radius: 0
-    scales:
-      x:
-        display: false
-      'y':
-        beginAtZero: true
-        display: false
-    plugins:
-      title:
-        display: false
-        text: Precipitation
-  entity_row: false
-  type: custom:chartjs-card
+type: custom:apexcharts-card
+apex_config:
+  chart:
+    height: 170px
+header:
+  show: true
+  floating: true
+  title: Precipitation next 90 minuntes
+  show_states: false
+  colorize_states: true
+series:
+  - entity: <entity_id>
+    type: area
+    stroke_width: 0
+    data_generator: |
+      const f = JSON.parse(entity.attributes.forecast_json)
+      return f.map(s=>[s.datetime,s.precipitation])
+span:
+  start: minute
+graph_span: 100min
+yaxis:
+  - show: false
+    min: 0
+layout: minimal
+
 ```
 
 ![Precipitation chart](precipitation_chart.png)
+
+### Debug
+Name your device `debug` to get random precipitation data in the range from 0 to 10.
