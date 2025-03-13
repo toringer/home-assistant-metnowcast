@@ -34,6 +34,8 @@ from .const import (
     ATTR_RADAR_COVERAGE,
     ATTR_RADAR_ONLINE,
     ATTR_HAS_PRECIPITATION,
+    ATTR_LAT,
+    ATTR_LONG
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -171,6 +173,9 @@ class NowcastWeather(WeatherEntity):
             ATTR_HAS_PRECIPITATION: self._has_precipitation,
             ATTR_RADAR_ONLINE: self._radar_online,
             ATTR_FORECAST_JSON: self._forecast_json,
+            ATTR_LONG:self.lon,
+            ATTR_LAT:self.lat
+
         }
 
     def serialize_datetime(self, obj):

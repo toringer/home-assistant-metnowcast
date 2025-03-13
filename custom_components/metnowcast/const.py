@@ -24,6 +24,8 @@ ATTR_RADAR_COVERAGE = "radar_coverage"
 ATTR_RADAR_ONLINE = "radar_online"
 ATTR_FORECAST_JSON = "forecast_json"
 ATTR_HAS_PRECIPITATION = "has_precipitation"
+ATTR_LAT = "latitude"
+ATTR_LONG = "longitude"
 CONDITIONS_MAP = {
     ATTR_CONDITION_CLEAR_NIGHT: {"clearsky_night"},
     ATTR_CONDITION_CLOUDY: {"cloudy_night", "cloudy_day", "cloudy"},

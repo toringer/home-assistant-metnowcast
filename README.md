@@ -1,7 +1,7 @@
 [![home-assistant-metnowcast](https://img.shields.io/github/release/toringer/home-assistant-metnowcast.svg?1)](https://github.com/toringer/home-assistant-metnowcast)
 [![Validate with hassfest](https://github.com/toringer/home-assistant-metnowcast/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/toringer/home-assistant-metnowcast/actions/workflows/hassfest.yaml)
 [![HACS Validation](https://github.com/toringer/home-assistant-metnowcast/actions/workflows/validate_hacs.yaml/badge.svg)](https://github.com/toringer/home-assistant-metnowcast/actions/workflows/validate_hacs.yaml)
-[![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)](https://github.com/toringer/home-assistant-metnowcast)
+[![Maintenance](https://img.shields.io/maintenance/yes/2025.svg)](https://github.com/toringer/home-assistant-metnowcast)
 [![home-assistant-metnowcast_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-metnowcast/total)](https://github.com/toringer/home-assistant-metnowcast)
 [![home-assistant-metnowcast_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-metnowcast/latest/total)](https://github.com/toringer/home-assistant-metnowcast)
 

@@ -31,7 +31,7 @@ async def validate_input(hass: HomeAssistant, lat: float, lon: float) -> dict[st
     api = MetApi()
     forecast = await hass.async_add_executor_job(api.get_complete, lat, lon)
     radar_coverage = forecast["properties"]["meta"]["radar_coverage"]
-    if radar_coverage != "ok":
+    if radar_coverage == "no coverage":
         raise NoCoverage
     return {"title": NAME}
 
@@ -40,7 +40,7 @@ async def validate_input(hass: HomeAssistant, lat: float, lon: float) -> dict[st
 class MetNowcastConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Nowcast."""
 
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -52,8 +52,13 @@ class MetNowcastConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         errors = {}
+        # reduce to 4 decimals for privacy
+        user_input[CONF_LATITUDE] = round(user_input[CONF_LATITUDE],4)
+        user_input[CONF_LONGITUDE] = round(user_input[CONF_LONGITUDE],4)
         lat = user_input[CONF_LATITUDE]
         lon = user_input[CONF_LONGITUDE]
+        _LOGGER.debug(f"Lat: {lat} Lon: {lon}")
+
         location_name = user_input[CONF_NAME]
         try:
             await validate_input(self.hass, lat, lon)
@@ -77,3 +82,4 @@ class MetNowcastConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
+
