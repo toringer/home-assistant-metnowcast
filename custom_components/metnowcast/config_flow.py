@@ -29,7 +29,7 @@ async def validate_input(hass: HomeAssistant, lat: float, lon: float) -> dict[st
     """Validate the user input allows us to connect."""
 
     api = MetApi()
-    forecast = await hass.async_add_executor_job(api.get_complete, lat, lon)
+    forecast = await api.get_now_cast(lat, lon)
     radar_coverage = forecast["properties"]["meta"]["radar_coverage"]
     if radar_coverage == "no coverage":
         raise NoCoverage

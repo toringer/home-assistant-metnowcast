@@ -13,18 +13,19 @@ from homeassistant.const import (
     UnitOfSpeed,
     UnitOfLength
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.util import dt as dt_util
 from homeassistant.components.weather import (
     Forecast,
     WeatherEntity,
     WeatherEntityFeature
 )
-from .met_api import MetApi
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+)
 from .const import (
     ATTR_FORECAST_JSON,
     ATTRIBUTION,
@@ -46,11 +47,11 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Setup weather platform."""
-    api: MetApi = hass.data[DOMAIN]["api"]
+    coordinator = hass.data[DOMAIN]["coordinator"]
     lat = entry.data[CONF_LATITUDE]
     lon = entry.data[CONF_LONGITUDE]
     name = entry.data[CONF_NAME]
-    sensors = [NowcastWeather(hass, api, name, lat, lon)]
+    sensors = [NowcastWeather(coordinator,name, hass, name, lat, lon)]
     async_add_entities(sensors, True)
 
 
@@ -62,7 +63,7 @@ def format_condition(condition: str) -> str:
     return condition
 
 
-class NowcastWeather(WeatherEntity):
+class NowcastWeather(CoordinatorEntity, WeatherEntity):
     """Representation of a Nowcast sensor."""
 
     _attr_native_temperature_unit =UnitOfTemperature.CELSIUS
@@ -72,15 +73,18 @@ class NowcastWeather(WeatherEntity):
 
     def __init__(
         self,
+        coordinator: CoordinatorEntity,
+        idx,
         hass: HomeAssistant,
-        met_api: MetApi,
         location_name: str,
         lat: float,
         lon: float,
     ):
+        super().__init__(coordinator, context=idx)
         """Initialize the sensor."""
+        self.idx = idx
         self._hass = hass
-        self._met_api = met_api
+
         self.location_name = location_name
         self.lat = lat
         self.lon = lon
@@ -91,11 +95,9 @@ class NowcastWeather(WeatherEntity):
         self._radar_online = False
         self._has_precipitation = False
         self._forecast_json = {}
+        self.coordinator = coordinator
+        self._handle_update()
 
-    @property
-    def force_update(self) -> str:
-        """Force update."""
-        return True
 
     @property
     def unique_id(self) -> str:
@@ -110,7 +112,8 @@ class NowcastWeather(WeatherEntity):
     @property
     def condition(self) -> str:
         """Return the current condition."""
-        condition = self._first_timeserie["data"]["next_1_hours"]["summary"][
+        first_timeserie = self._get_first_timeserie()
+        condition = first_timeserie["data"]["next_1_hours"]["summary"][
             "symbol_code"
         ]
         return format_condition(condition)
@@ -118,7 +121,8 @@ class NowcastWeather(WeatherEntity):
     @property
     def native_temperature(self) -> float:
         """Return the temperature."""
-        return self._first_timeserie["data"]["instant"]["details"]["air_temperature"]
+        first_timeserie = self._get_first_timeserie()
+        return first_timeserie["data"]["instant"]["details"]["air_temperature"]
 
     @property
     def native_pressure(self) -> float:
@@ -128,19 +132,23 @@ class NowcastWeather(WeatherEntity):
     @property
     def humidity(self) -> float:
         """Return the humidity."""
-        return self._first_timeserie["data"]["instant"]["details"]["relative_humidity"]
+        first_timeserie = self._get_first_timeserie()
+        return first_timeserie["data"]["instant"]["details"]["relative_humidity"]
 
     @property
     def native_wind_speed(self) -> float:
         """Return the wind speed."""
-        return self._first_timeserie["data"]["instant"]["details"]["wind_speed"]
+        first_timeserie = self._get_first_timeserie()
+        return first_timeserie["data"]["instant"]["details"]["wind_speed"]
 
     @property
     def wind_bearing(self) -> float:
         """Return the wind direction."""
-        return self._first_timeserie["data"]["instant"]["details"][
+        first_timeserie = self._get_first_timeserie()
+        wind_bearing =  first_timeserie["data"]["instant"]["details"][
             "wind_from_direction"
         ]
+        return wind_bearing
 
     @property
     def attribution(self) -> str:
@@ -191,14 +199,25 @@ class NowcastWeather(WeatherEntity):
         """
         return self._forecast
 
-    async def async_update(self):
+    def _get_first_timeserie(self):
+        """Get the value from the coordinator"""
+        data = self.coordinator.data["properties"]["timeseries"][0]
+        return data
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._handle_update()
+        self.async_write_ha_state()
+
+    def _handle_update(self) -> None:
+        """Handle updated data from the coordinator."""
+
         self._forecast = []
         self._has_precipitation = False
 
         """Retrieve latest state."""
-        self._raw_data = await self._hass.async_add_executor_job(
-            self._met_api.get_complete, self.lat, self.lon
-        )
+        self._raw_data = self.coordinator.data
+
         self._radar_coverage = self._raw_data["properties"]["meta"]["radar_coverage"]
         if self._radar_coverage == "ok":
             self._radar_online = True
@@ -271,3 +290,4 @@ class NowcastWeather(WeatherEntity):
         )
         self._first_timeserie = self._raw_data["properties"]["timeseries"][0]
         _LOGGER.info(f"{self.location_name} updated")
+
