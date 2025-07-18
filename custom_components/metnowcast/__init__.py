@@ -8,6 +8,7 @@ from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE, CONF_NAME
 from .const import DOMAIN
 from .coordinator import MetCoordinator
 import asyncio
+from .met_api import MetApi
 
 PLATFORMS: list[Platform] = [Platform.WEATHER]
 _LOGGER = logging.getLogger(__name__)
@@ -18,13 +19,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     lat = entry.data[CONF_LATITUDE]
     lon = entry.data[CONF_LONGITUDE]
     name = entry.data[CONF_NAME]
-    coordinator = MetCoordinator(hass, entry, name, lat, lon)
+
+    # Ensure DOMAIN is initialized in hass.data
+    hass.data.setdefault(DOMAIN, {})
+    # Create and store a single MetApi instance if not already present
+    if "api" not in hass.data[DOMAIN]:
+        hass.data[DOMAIN]["api"] = MetApi(hass)
+    api = hass.data[DOMAIN]["api"]
+
+    coordinator = MetCoordinator(hass, entry, name, lat, lon, api)
     await coordinator.async_config_entry_first_refresh()
 
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
-    hass.data[DOMAIN]["coordinator"] = coordinator
-
+    hass.data[DOMAIN][entry.entry_id] = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -42,9 +48,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
     )
     if unloaded:
-        coordinator = hass.data[DOMAIN]["coordinator"]
-        if coordinator is not None:
-            hass.data[DOMAIN]["coordinator"] = None
+        hass.data[DOMAIN].pop(entry.entry_id)
+        _LOGGER.debug("pop coordinator")
     return unloaded
 
 

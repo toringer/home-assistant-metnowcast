@@ -28,7 +28,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 async def validate_input(hass: HomeAssistant, lat: float, lon: float) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
 
-    api = MetApi()
+    api = MetApi(hass)
     forecast = await api.get_now_cast(lat, lon)
     radar_coverage = forecast["properties"]["meta"]["radar_coverage"]
     if radar_coverage == "no coverage":

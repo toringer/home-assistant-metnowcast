@@ -2,7 +2,7 @@
 from __future__ import annotations
 import logging
 from .const import NotFound, VERSION
-import aiohttp
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,16 +16,17 @@ REQUEST_HEADER = {
 class MetApi:
     """Met.no API"""
 
-    def __init__(self) -> None:
-        """Init"""
+    def __init__(self, hass) -> None:
+        """Init with Home Assistant instance."""
+        self.hass = hass
 
     async def get_now_cast(self, lat: float, lon: float):
-        """Get Nowcast from met.no using aiohttp """
+        """Get Nowcast from met.no using Home Assistant's shared aiohttp session."""
         url = f"{BASE_URL}/complete"
         param = {"lat": lat, "lon": lon}
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url=url, params=param, headers=REQUEST_HEADER) as response:
-                if response.status != 200:
-                    raise NotFound
-                data = await response.json()
-                return data
+        session = async_get_clientsession(self.hass)
+        async with session.get(url=url, params=param, headers=REQUEST_HEADER) as response:
+            if response.status != 200:
+                raise NotFound
+            data = await response.json()
+            return data

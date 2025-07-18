@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 class MetCoordinator(DataUpdateCoordinator):
     """Met coordinator."""
 
-    def __init__(self, hass, config_entry, name, lat, long):
+    def __init__(self, hass, config_entry, name, lat, long, met_api):
         """Initialize my coordinator."""
         super().__init__(
             hass,
@@ -23,7 +23,7 @@ class MetCoordinator(DataUpdateCoordinator):
             # Polling interval. Will only be polled if there are subscribers.
             update_interval=timedelta(minutes=7),
         )
-        self._metApi = MetApi()
+        self._metApi = met_api
         self.lat = lat
         self.long = long
 
